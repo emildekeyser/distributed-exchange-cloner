@@ -39,12 +39,12 @@ Requirements:
 
 Following module names are __not__ changeable. __If you don't use these, I can't run my tests and you will get a failing grade!__
 
-* `DaAssignment.Logger`
-* `DaAssignment.ProcessManager`
+* `AssignmentOne.Logger`
+* `AssignmentOne.ProcessManager`
   * I should be able to call the function `retrieve_coin_processes/0` which gives me a `list of tuples`. The first element of a tuple is the currency pair, whereas the second is the `PID` of the CoindataRetriever process.
-* `DaAssignment.RateLimiter`
+* `AssignmentOne.RateLimiter`
   * `change_rate_limit/1` changes the rate limit. This should be noticeable when the Logger is logging entries.
-* `DaAssignment.CoindataRetriever`
+* `AssignmentOne.CoindataRetriever`
   * `get_history/1` retrieves the history of the passed PID. The expected format will be `{"BTC_BTS", [%{...}, %{...}, ...]}`
 
 ## _Indication_ that your code is working
