@@ -1,6 +1,5 @@
 defmodule AssignmentOneTest do
   use ExUnit.Case
-  doctest AssignmentOne
 
   alias AssignmentOne.{Logger, ProcessManager, RateLimiter}
 
