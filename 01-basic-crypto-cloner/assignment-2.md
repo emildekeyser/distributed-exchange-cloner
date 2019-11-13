@@ -26,7 +26,7 @@ Requirements:
   * [Relevant documentation](https://hexdocs.pm/elixir/Config.html)
   * Your timeframe (previously `@from` and `@until` module attributes in the startup file.)
   * The api request/s limit.
-* On submission, the configuration file must contain the following settings:
+* The configuration file must contain the following settings:
   * `@until` must be set to `DateTime.utc_now() |> DateTime.to_unix()`
   * `@from` must be set to `(DateTime.utc_now() |> DateTime.to_unix()) - 60 * 60 * 24 * 7`
   * `@rate` must be set to `5`
@@ -46,8 +46,8 @@ Requirements:
   * Make a `AssignmentTwo.HistoryKeeperManager`. Similar to our process manager (which is kind of an ambigious name now, but let's forget about that), it'll start N `AssignmentTwo.HistoryKeeperWorker` workers under a supervisor that supports dynamic workers out of the box and name-register this as `AssignmentTwo.HistoryKeeperSupervisor`.
   * This `HistoryKeeperManager` will ask your process manager what coin pairs are supported.
   * [VERIFY] Your `HistoryKeeperManager` should by no means hold an invalid state when starting your application. (Hint, `handle_continue`!)
-  * Every historykeeper will keep the history of a specific coin pair.
-  * The `CoindataRetriever` worker will ask the responsible historykeeper what it should still clone.
+  * Every`HistoryKeeperWorker` will keep the history of a specific coin pair.
+  * The `CoindataRetriever` worker will ask the responsible `HistoryKeeperWorker` what it should still clone.
   * [EXTRA] You can update the timeframe of a specific coin.
 * We're going to make our Logger a little bit more fancy:
   * When printing a message, we can give a "level" towards this message. This level indicates whether it is a debug message, information message, warning, etc... Use the levels mentioned [here](https://hexdocs.pm/logger/Logger.html).
