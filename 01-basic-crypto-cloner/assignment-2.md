@@ -22,7 +22,7 @@ Requirements:
 
 * The startup file should no longer exist.
 * Use the application configuration to configure:
-  * This configuration should be stored under root_folder/config/conf.exs
+  * This configuration should be stored under root_folder/config/config.exs
   * [Relevant documentation](https://hexdocs.pm/elixir/Config.html)
   * Your timeframe (previously `@from` and `@until` module attributes in the startup file.)
   * The api request/s limit.
