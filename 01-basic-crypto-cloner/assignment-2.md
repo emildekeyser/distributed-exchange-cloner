@@ -12,7 +12,7 @@ If for some mysterious reason GitHub should be offline, you are allowed to send 
 
 _This might be obvious, but not having internet access is by no means a reason to not submit your code before the deadline._
 
-There can be small changes to this assignment (function names, small adjustments, etc...) up until `17 November`.
+There can be small changes to this assignment (function names, small adjustments, etc...).
 
 ## Assignment
 
@@ -34,8 +34,8 @@ Requirements:
   * Use an appropriate supervisor construction for your process manager and worker processes.
   * Your process manager is allowed to crash as long as it does not impact the rest of your application.
   * The process manager name registration stays the same.
-  * Use a supervisor that supports dynamic workers out of the box and name-register this as `AssignmentTwo.CoindataRetrieverSupervisor`.
-  * Worker processes (`AssignmentOne.CoindataRetriever` processes) are started in the process manager.
+  * Use a supervisor that supports dynamic workers out of the box and name-register this as `Assignment.CoindataRetrieverSupervisor`.
+  * Worker processes (`Assignment.CoindataRetriever` processes) are started in the process manager.
   * By no means should the "starting processes" part impact the rest of your application. This means that the supervisor supervising this process manager should not "hang".
   * The process manager should not be able to have an invalid state.
   * Put simply, the above 3 points all indicate that you should start your processes in the `handle_continue` callback. This is very important.
@@ -43,7 +43,7 @@ Requirements:
   * Your workers no longer keep your history. More about this in the next section.
 * Some great students mentioned that when the process crashes, the history shouldn't be lost with it. They were completely right! For this reason, we're refactoring the following:
   * Similar to our worker setup with supervisors, we're going to do the same for our history keepers.
-  * Make a `AssignmentTwo.HistoryKeeperManager`. Similar to our process manager (which is kind of an ambigious name now, but let's forget about that), it'll start N `AssignmentTwo.HistoryKeeperWorker` workers under a supervisor that supports dynamic workers out of the box and name-register this as `AssignmentTwo.HistoryKeeperSupervisor`.
+  * Make a `Assignment.HistoryKeeperManager`. Similar to our process manager (which is kind of an ambigious name now, but let's forget about that), it'll start N `Assignment.HistoryKeeperWorker` workers under a supervisor that supports dynamic workers out of the box and name-register this as `Assignment.HistoryKeeperSupervisor`.
   * This `HistoryKeeperManager` will ask your process manager what coin pairs are supported.
   * [VERIFY] Your `HistoryKeeperManager` should by no means hold an invalid state when starting your application. (Hint, `handle_continue`!)
   * Every`HistoryKeeperWorker` will keep the history of a specific coin pair.
@@ -54,5 +54,20 @@ Requirements:
 
 ## Module names, constraints, method names & tests
 
-* TODO method names -> this should just be refactoring of your method names.
+Following module names will be used:
+* `Assignment.*` (In order to avoid confusion between AssignmentOne, Two. Three, ...)
+  * `Assignment.RateLimiter` name registered under its module name.
+  * `Assignment.CoindataRetrieverSupervisor` name registered under its module name.
+  * `Assignment.CoindataSupervisor` (Yes, there are 2 supervisors here!) not name registered.
+  * `Assignment.CoindataRetriever` not name registered.
+  * `Assignment.ProcessManager` name registered under its module name.
+  * `Assignment.HistoryKeeperWorkerSupervisor` name registered under its module name.
+  * `Assignment.HistoryKeeperSupervisor` (Yes, there are 2 supervisors here!) not name registered.
+  * `Assignment.HistoryKeeperWorker` not name registered.
+  * `Assignment.HistoryKeeperManager` name registered under its module name.
+* TODO method names `18 November` -> this should just be refactoring of your method names.
 * TODO tests -> I'll provide **_indicative_** tests, which can be adjusted based on your implementation.
+
+## Additional constraint
+
+In order to score 50% on this PE, you need to make sure that the functionality of the first assignment works completely. This includes adjusting your timeframe when there are 1000 records!
