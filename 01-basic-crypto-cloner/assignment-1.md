@@ -14,7 +14,7 @@ _This might be obvious, but not having internet access is by no means a reason t
 
 ## Assignment
 
-We will make use of a public API to retrieve cryptocurrency data. The first part is actually quite easy, clone the **last week** trading history for all supported coins. When you have cloned this week of history, your application should stop cloning the history of that currency pair. This does not mean that your application stops! The process stays alive as well, because most likely your process will keep its history in its state.
+We will make use of a public API to retrieve cryptocurrency data. The first part is actually quite easy, starting the application will clone the **last week** trading history for all supported currency pairs automatically. When you have cloned this week of history, your application should stop cloning the history of that currency pair. This does not mean that your application stops! The process stays alive as well, because most likely your process will keep its history in its state.
 
 So... what's the catch? First of all there's an API requests/second limit. This is (at the moment of writing) 6 requests/second. ~~Later on I'll provide a test API.~~
 

@@ -45,10 +45,10 @@ Requirements:
   * Similar to our worker setup with supervisors, we're going to do the same for our history keepers.
   * Make a `Assignment.HistoryKeeperManager`. Similar to our process manager (which is kind of an ambigious name now, but let's forget about that), it'll start N `Assignment.HistoryKeeperWorker` workers under a supervisor that supports dynamic workers out of the box and name-register this as `Assignment.HistoryKeeperSupervisor`.
   * This `HistoryKeeperManager` will ask your process manager what coin pairs are supported.
-  * [VERIFY] Your `HistoryKeeperManager` should by no means hold an invalid state when starting your application. (Hint, `handle_continue`!)
+  * Your `HistoryKeeperManager` should by no means hold an invalid state when starting your application. (Hint, `handle_continue`!)
   * Every`HistoryKeeperWorker` will keep the history of a specific coin pair.
   * The `CoindataRetriever` worker will ask the responsible `HistoryKeeperWorker` what it should still clone.
-  * [EXTRA] You can update the timeframe of a specific coin.
+  * [BONUS] You can update the timeframe of a specific coin.
 * We're going to make our Logger a little bit more fancy:
   * When printing a message, we can give a "level" towards this message. This level indicates whether it is a debug message, information message, warning, etc... Use the levels mentioned [here](https://hexdocs.pm/logger/Logger.html).
 
@@ -66,10 +66,22 @@ Following module names will be used:
   * `Assignment.HistoryKeeperSupervisor` (Yes, there are 2 supervisors here!) not name registered.
   * `Assignment.HistoryKeeperWorker` not name registered.
   * `Assignment.HistoryKeeperManager` name registered under its module name.
-* TODO method names `18 November` -> this should just be refactoring of your method names.
-* TODO tests -> I'll provide **_indicative_** tests, which can be adjusted based on your implementation.
+* Function names:
+  * The function names written in the tests must be used as well.
+  * `Assignment.HistoryKeeperWorker.get_history/1` is the method that'll return the history. No longer your CoindataRetriever!
+  * `Assignment.Logger.log/2` now takes 2 arguments. The first is the level and the second is the message.
+  * `Assignment.HistoryKeeperWorker.get_pair_info/1` returns the currency pair in string format.
+  * `Assignment.HistoryKeeperWorker.get_history` retrieves the history of the passed PID. The expected format will be `{"BTC_BTS", [%{...}, %{...}, ...]}`
+  * `Assignment.HistoryKeeperWorker.request_timeframe/1` requests the next timeframe that the worker should retrieve.
+  * [BONUS] `Assignment.HistoryKeeperWorker.update_timeframe(pid, %{from: _, until: _})` updates the new timeframe for that specific coin that it should clone. _Example usage: Assignment.HistoryKeeperManager.get_pid_for("USDT_BTC") |> Assignment.HistoryKeeperWorker.update_timeframe(%{from: 2_years_ago_in_unix, until: now_in_unix})_
+  * `Assignment.HistoryKeeperManager.get_pid_for/1` returns the pid of the process that is keeping the history for that currency pair.
+  * `Assignment.HistoryKeeperManager.retrieve_history_processes/0` returns a list of tuples. The first element of the tuple is a string (the currency pair) whereas the second element is the PID of the associated process.
 
-## Additional constraint
+
+
+* **_indicative_** tests -> check the file `assignment_two_test.exs`.
+
+## Additional constraints
 
 * We are changing the time frame from one week to 33 days. Test this with the sample config code.
 
