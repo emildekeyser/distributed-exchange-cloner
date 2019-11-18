@@ -27,9 +27,9 @@ Requirements:
   * Your timeframe (previously `@from` and `@until` module attributes in the startup file.)
   * The api request/s limit.
 * The configuration file must contain the following settings:
-  * `@until` must be set to `DateTime.utc_now() |> DateTime.to_unix()`
-  * `@from` must be set to `(DateTime.utc_now() |> DateTime.to_unix()) - 60 * 60 * 24 * 7`
-  * `@rate` must be set to `5`
+  * `:until` must be set to `DateTime.utc_now() |> DateTime.to_unix()`
+  * `:from` must be set to `(DateTime.utc_now() |> DateTime.to_unix()) - 60 * 60 * 24 * 33`
+  * `:rate` must be set to `5`
 * For the part regarding your process manager and worker processes:
   * Use an appropriate supervisor construction for your process manager and worker processes.
   * Your process manager is allowed to crash as long as it does not impact the rest of your application.
@@ -55,6 +55,7 @@ Requirements:
 ## Module names, constraints, method names & tests
 
 Following module names will be used:
+
 * `Assignment.*` (In order to avoid confusion between AssignmentOne, Two. Three, ...)
   * `Assignment.RateLimiter` name registered under its module name.
   * `Assignment.CoindataRetrieverSupervisor` name registered under its module name.
@@ -70,4 +71,6 @@ Following module names will be used:
 
 ## Additional constraint
 
-In order to score 50% on this PE, you need to make sure that the functionality of the first assignment works completely. This includes adjusting your timeframe when there are 1000 records!
+* We are changing the time frame from one week to 33 days. Test this with the sample config code.
+
+* In order to score 50% on this PE, you need to make sure that the functionality of the first assignment works completely. This includes adjusting your timeframe when there are 1000 records!
