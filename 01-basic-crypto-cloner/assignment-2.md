@@ -1,4 +1,4 @@
-# Permanent Evaluation 1 : API consuming service
+# Permanent Evaluation 2 : fault-tolerant API consuming service
 
 ## Rules
 
