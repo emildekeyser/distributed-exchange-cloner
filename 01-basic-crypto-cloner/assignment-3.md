@@ -1,4 +1,4 @@
-# Permanent Evaluation 3 : Distributed cloner with reporter
+# Permanent Evaluation 3: Distributed cloner with reporter
 
 ## Rules
 
@@ -16,26 +16,33 @@ There can be small changes to this assignment (function names, small adjustments
 
 ## Assignment
 
-You will refactor your code and implement new features written below.
+For this assignment, you will need to refactor your second iterations
+so as to include load balancing. The logger must also be replaced by
+a separate reporter application.
 
-Requirements:
+## Sample flow of application
 
-* Process manager is replaced with the built-in registry module. (more about this later)
-* History keeper manager is replaced with the built-in registry module. (more about this later)
-* You'll still use application configuration for the `:rate`, `:from` and `:until` values
-* You no longer need a logger in your cloner application. (_Hint: delete this functionality at the last moment so that you can use this to verify that other functionalities work._)
-* You'll create a second application, which is your "reporter" application. More about this later.
-* When a node joins the cluster (use libcluster), it is automatically connected to the other nodes.
-* Upon joining the cluster, you check whether other nodes are in the cluster or not. (If not, you're the first node in the cluster.) If there are other nodes, you do not automatically start cloning. If you are the first node, then you start all currency pair processes.
-* Up until now you've got no globally registered processes. Since your processmanager is gone, you'll need another process to do some kind "balancing" between nodes (more about this later). Create a globally registered process with the module name `Assignment.CoindataCoordinator`.
-* At each moment in time, a node can rebalance work over the cluster. You do this with `Assignment.CoindataCoordinator.balance/0`. This balancing "algorithm" does not need to be optimal, but should be eventually consistend after running several times.
-* When work is redistributed, the progress is **NOT** lost.
-* When a node crashes, do not worry yourself about no longer cloning all the currency pairs.
-* When calling the `Assignment.CoindataCoordinator.balance/0` function, it'll check with the REST API if the application is running all the necessary processes to clone all currency pairs. If there are missing processes (e.g. because of a node disconnecting), you'll start these under your own node (because they'll be balanced anyway).
+Feel free to make the assumption that you'll always start a cloner node before you start a reporter node
 
-## Reporter application
+* Node 1 is started
+* Node 1 detects no other nodes and starts cloning
+* Node 2 is started
+* Node 2 detects other nodes and it doesn't start cloning automatically
+* Node 3 is started
+* Node 3 detects other nodes and it doesn't start cloning automatically
+* Node 2 starts balancing
+* Node 2 asks node 1 to transfer N currency pairs to node 3
+* Node 2 asks node 1 to transfer N currency pairs to node 2
+* Reporter is started
+* Every 10 seconds output is printed on that node's CLI
+* Node 3 quits and N currency pairs are lost
+* Node 2 starts balancing
+* Node 2 detects that not all currency pairs are being cloned, and starts processes the missing currency pairs
+* Node 2 asks Node X to transfer N currency pairs to node X
 
-This is a simple application with no global registered processes. It has one `GenServer` that runs the necessary code every 10 seconds to print out the status of the whole distributed application.
+## Reporter Application
+
+This is a simple application with no globally registered processes. It has one `GenServer` that runs the necessary code every 10 seconds to print out the status of the whole distributed application.
 
 I'm expecting easy to read,  **sorted** (based on %) output such as:
 
@@ -52,7 +59,7 @@ N2   | ...      | ++++++++++++++++++++ | 100%       | 112
 
 ## Registry module
 
-It is up to you to user either:
+It is up to you to use either:
 
 * 1 application registry where you work with the keys "coindata" and "historykeeper". The values for these groups are a list of tuples, where one tuple is an entry for a worker.
   * Easier to use for local PubSub mechanisms.
@@ -62,28 +69,25 @@ It is up to you to user either:
   * Easier to do key-value lookups (`Registry.lookup`)
   * Difficult to retrieve all pids. Documentation explains this at `Registry.select` (`SelectAllTest`).
 
-At the exam, I will ask what method you chose and why.
+At the exam, I will ask which method you chose and your reasons why.
 
 ## Evaluation
 
 * There will be no tests, but on the exam you'll thoroughly show how your application works in 10 minutes.
 
-## Sample flow of application
+## Requirements
 
-Feel free to make the assumption that you'll always start a cloner node before you start a reporter node
+You need to refactor your code and implement additional features as listed below.
 
-* Node 1 is started
-* Node 1 detects no other nodes and starts cloning
-* Node 2 is started
-* Node 2 detects other nodes and it doesn't start cloning automatically
-* Node 3 is started
-* Node 3 detects other nodes and it doesn't start cloning automatically
-* Node 2 starts balancing
-* Node 2 asks node 1 to transfer N currency pairs to node 3
-* Node 2 asks node 1 to transfer N currency pairs to node 2
-* Reporter is started
-* Every 10 seconds output is printed on that node its CLI
-* Node 3 quits and N currency pairs are lost
-* Node 2 starts balancing
-* Node 2 detects that not all currency pairs are being cloned, and starts the missing currency pairs on its own node
-* Node 2 ask Node X to transfer N currency pairs to node X
+* Process manager is replaced with the built-in registry module (more about this later.)
+* History keeper manager is replaced with the built-in registry module (more about this later.)
+* You'll still use application configuration for the `:rate`, `:from` and `:until` values.
+* You no longer need a logger in your cloner application. (_Hint: delete this functionality at the last moment so that you can use this to verify that other functionalities work._)
+* You'll create a second application, which is your "reporter" application. More about this later.
+* When a node joins the cluster (use libcluster), it is automatically connected to the other nodes.
+* Upon joining the cluster, you check whether other nodes are in the cluster or not. (If not, you're the first node in the cluster.) If there are other nodes, you do not automatically start cloning. If you are the first node, then you start all currency pair processes.
+* Up until now you have no globally registered processes. Since your process manager is gone, you'll need another process to do some kind "balancing" between nodes (more about this later). Create a globally registered process with the module name `Assignment.CoindataCoordinator`.
+* At each moment in time, a node can rebalance work over the cluster. You do this with `Assignment.CoindataCoordinator.balance/0`. This balancing algorithm does not need to be optimal, but should be eventually consistend after running several times.
+* When work is redistributed, progress is **NOT** lost.
+* When a node crashes, do not worry about no longer cloning all the currency pairs.
+* When calling the `Assignment.CoindataCoordinator.balance/0` function, it'll check with the REST API if the application is running all the necessary processes to clone all currency pairs. If there are missing processes (e.g. because of a node disconnecting), you'll start these under your own node (because they'll be balanced anyway).
