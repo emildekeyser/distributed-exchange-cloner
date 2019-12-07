@@ -5,8 +5,8 @@ defmodule Assignment.Application do
     children = [
       # Do not change this file!
       %{
-        id: AssignmentOne.Startup,
-        start: {AssignmentOne.Startup, :start_link, []}
+        id: Assignment.Startup,
+        start: {Assignment.Startup, :start_link, []}
       }
     ]
 

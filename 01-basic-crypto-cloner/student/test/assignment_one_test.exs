@@ -13,6 +13,7 @@ defmodule AssignmentTest do
 
   # Tests for ProcessManager
   test "ProcessManager returns list of currency pairs" do
+    :timer.sleep(1500)
     procs = ProcessManager.retrieve_coin_processes()
     assert Enum.all?(procs, &is_tuple/1)
     assert Enum.all?(procs, fn {bin, pid} -> is_binary(bin) and is_pid(pid) end)
@@ -22,13 +23,15 @@ defmodule AssignmentTest do
 
   test "ProcessManager restarts dead processes" do
     # Normally you shouldn't adjust this, but feel free to raise the amount if necessary
-    :timer.sleep(500)
+    :timer.sleep(1500)
     amount_of_processes = ProcessManager.retrieve_coin_processes() |> length()
 
     ProcessManager.retrieve_coin_processes()
     |> List.first()
     |> elem(1)
     |> Process.exit(:kill)
+
+    :timer.sleep(1500)
 
     assert ProcessManager.retrieve_coin_processes() |> length() ==
              amount_of_processes
@@ -52,7 +55,7 @@ defmodule AssignmentTest do
   end
 
   # Tests for CoinDataRetriever
-  test "CoinDataRetriever actually gets new values" do
+  test "CoindataRetriever actually gets new values" do
     pid =
       ProcessManager.retrieve_coin_processes()
       |> Enum.filter(fn {coin, _pid} -> coin == "BTC_DGB" end)
