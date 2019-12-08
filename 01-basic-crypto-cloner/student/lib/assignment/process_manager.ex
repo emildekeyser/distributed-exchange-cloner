@@ -33,6 +33,7 @@ defmodule Assignment.ProcessManager  do
     |> Map.keys()
     |> Enum.each(fn p
       -> Assignment.ProcessManager.start_coin_retriever(p, timeframe) end)
+    # require IEx; IEx.pry()
   end
 
 #        ::::::::  :::::::::: :::::::::  :::     ::: :::::::::: ::::::::: 

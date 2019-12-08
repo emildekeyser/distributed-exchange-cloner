@@ -15,11 +15,17 @@ defmodule Assignment.HistoryKeeperWorker do
   def coinpair(pid), do:
     GenServer.call(pid, :coinpair)
 
-  def get_history(pid), do:
+  def get_history(pid) do
     GenServer.call(pid, :history)
+  end
 
-  def save(pid, data), do:
-    GenServer.cast(pid, {:save, data})
+  def load(pid, timeframe) do
+    GenServer.call(pid, :load)
+    |> Map.get(timeframe, [])
+  end
+
+  def save(pid, timeframe, data), do:
+    GenServer.cast(pid, {:save, timeframe, data})
 
 #        ::::::::  :::::::::: :::::::::  :::     ::: :::::::::: ::::::::: 
 #      :+:    :+: :+:        :+:    :+: :+:     :+: :+:        :+:    :+: 
@@ -31,24 +37,34 @@ defmodule Assignment.HistoryKeeperWorker do
 
   @impl true
   def init(coinpair) do
-    {:ok, {coinpair, []}}
+    {:ok, {coinpair, %{}}}
   end
 
   # TODO?: make this a map merging algorithm instead of full overwrite ?
   # TODO?: also persistent (disk) storage ?
   @impl true
-  def handle_cast({:save, newdata}, {coinpair, _data}) do
-    {:noreply, {coinpair, newdata}}
+  def handle_cast({:save, timeframe, newdata}, {coinpair, datamap}) do
+    {:noreply, {coinpair, Map.put(datamap, timeframe, newdata)}}
   end
 
   @impl true
-  def handle_call(:coinpair, _from, {coinpair, data}) do
-    {:reply, coinpair, {coinpair, data}}
+  def handle_call(:coinpair, _from, {coinpair, datamap}) do
+    {:reply, coinpair, {coinpair, datamap}}
   end
 
   @impl true
-  def handle_call(:history, _from, {coinpair, data}) do
-    {:reply, {coinpair, data}, {coinpair, data}}
+  def handle_call(:load, _from, {coinpair, datamap}) do
+    {:reply, datamap, {coinpair, datamap}}
+  end
+
+  @impl true
+  def handle_call(:history, _from, {coinpair, datamap}) do
+    first = datamap |> Map.values() |> List.first()
+    if first == nil do
+      {:reply, {coinpair, []}, {coinpair, datamap}}
+    else
+      {:reply, {coinpair, first}, {coinpair, datamap}}
+    end
   end
 
 end 

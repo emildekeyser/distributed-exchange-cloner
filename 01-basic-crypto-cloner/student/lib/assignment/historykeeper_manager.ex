@@ -15,21 +15,20 @@ defmodule Assignment.HistoryKeeperManager  do
     DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  def save(coinpair, data) do
+  def save(coinpair, timeframe, data) do
     retrieve_history_processes()
     |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
     |> List.first()
     |> elem(1)
-    |> Assignment.HistoryKeeperWorker.save(data)
+    |> Assignment.HistoryKeeperWorker.save(timeframe, data)
   end
 
-  def load(coinpair) do
+  def load(coinpair, timeframe) do
     retrieve_history_processes()
     |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
     |> List.first()
     |> elem(1)
-    |> Assignment.HistoryKeeperWorker.get_history()
-    |> elem(1)
+    |> Assignment.HistoryKeeperWorker.load(timeframe)
   end
 
   def start_historykeeper_worker(coinpair) do
