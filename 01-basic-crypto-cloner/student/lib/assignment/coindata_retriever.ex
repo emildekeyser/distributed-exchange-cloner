@@ -1,3 +1,4 @@
+# TODO: Algorithm to retrieve more then 1000 and to retreive diffrent timeframes
 defmodule Assignment.CoindataRetriever do
   use GenServer
 
