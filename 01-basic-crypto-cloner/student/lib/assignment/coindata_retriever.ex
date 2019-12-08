@@ -48,17 +48,21 @@ defmodule Assignment.CoindataRetriever do
 
   @impl true
   def init({coinpair, timeframe}) do
-    Assignment.RateLimiter.i_want_to_retrieve(self())
-    {:ok, {coinpair, timeframe, []}}
+    data = Assignment.HistoryKeeperManager.load(coinpair)
+    # TODO check timeframe
+    if data == [], do: Assignment.RateLimiter.i_want_to_retrieve(self())
+    Assignment.Logger.log(:debug, data)
+    {:ok, {coinpair, timeframe, data}}
   end
 
   @impl true
   def handle_cast(:retrieve, {coinpair, timeframe, data}) do
     url = make_url(coinpair, timeframe)
-    Assignment.Logger.log(['Requesting: ', url])
+    Assignment.Logger.log(:info, ['Requesting: ', url])
     {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
       :httpc.request(url)
     data = data ++ Jason.decode!(body)
+    Assignment.HistoryKeeperManager.save(coinpair, data)
     {:noreply, {coinpair, timeframe, data}}
   end
 

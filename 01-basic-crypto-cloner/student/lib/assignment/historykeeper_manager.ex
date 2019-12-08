@@ -1,4 +1,4 @@
-defmodule Assignment.ProcessManager  do
+defmodule Assignment.HistoryKeeperManager  do
   use DynamicSupervisor
 
   @all_coinpairs_url 'https://poloniex.com/public?command=returnTicker'
@@ -11,28 +11,45 @@ defmodule Assignment.ProcessManager  do
 #  #+#    #+# #+#            #+#     #+#        #+#   #+#+#     #+#          
 #  ########  ########## ########### ########## ###    ####     ###           
 
-  def start_link(args) do
-    DynamicSupervisor.start_link(__MODULE__, args, name: __MODULE__)
+  def start_link() do
+    DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  def start_coin_retriever(coinpair, timeframe) do
-    spec = {Assignment.CoindataRetriever, {coinpair, timeframe}}
+  def save(coinpair, data) do
+    retrieve_history_processes()
+    |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
+    |> List.first()
+    |> elem(1)
+    |> Assignment.HistoryKeeperWorker.save(data)
+  end
+
+  def load(coinpair) do
+    retrieve_history_processes()
+    |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
+    |> List.first()
+    |> elem(1)
+    |> Assignment.HistoryKeeperWorker.get_history()
+    |> elem(1)
+  end
+
+  def start_historykeeper_worker(coinpair) do
+    spec = {Assignment.HistoryKeeperWorker, coinpair}
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
 
-  def retrieve_coin_processes() do
+  def retrieve_history_processes() do
     DynamicSupervisor.which_children(__MODULE__)
     |> Enum.map(fn {_, pid, _, _} ->
-      {Assignment.CoindataRetriever.coinpair(pid), pid} end)
+      {Assignment.HistoryKeeperWorker.coinpair(pid), pid} end)
   end
 
-  defp start_processes(timeframe) do
+  defp start_processes() do
     {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
       :httpc.request(@all_coinpairs_url)
     Jason.decode!(body)
     |> Map.keys()
     |> Enum.each(fn p
-      -> Assignment.ProcessManager.start_coin_retriever(p, timeframe) end)
+      -> Assignment.HistoryKeeperManager.start_historykeeper_worker(p) end)
   end
 
 #        ::::::::  :::::::::: :::::::::  :::     ::: :::::::::: ::::::::: 
@@ -44,8 +61,8 @@ defmodule Assignment.ProcessManager  do
 #  ########  ########## ###    ###     ###     ########## ###    ###      
 
   @impl true
-  def init(timeframe) do
-    Task.start_link(fn -> start_processes(timeframe) end)
+  def init(_) do
+    Task.start(&start_processes/0)
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
