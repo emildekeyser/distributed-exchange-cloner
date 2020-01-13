@@ -13,8 +13,9 @@ defmodule Assignment.CoindataRetriever do
 #  #+#    #+# #+#            #+#     #+#        #+#   #+#+#     #+#          
 #  ########  ########## ########### ########## ###    ####     ###           
 
-  def start_link(args), do:
-    GenServer.start_link(__MODULE__, args)
+  def start_link(args = {coinpair, _timeframe}), do:
+    GenServer.start_link(__MODULE__, args,
+      name: {:via, Registry, {Assignment.CoindataRegistry, coinpair}})
 
   def retrieve(pid) do
     if Process.alive?(pid) do

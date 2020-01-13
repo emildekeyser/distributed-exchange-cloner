@@ -20,9 +20,11 @@ defmodule Assignment.CoindataCoordinator do
   end
 
   def retrieve_coin_processes() do
-    DynamicSupervisor.which_children(Assignment.CoindataRetrieverSupervisor)
-    |> Enum.map(fn {_, pid, _, _} ->
-      {Assignment.CoindataRetriever.coinpair(pid), pid} end)
+    # DynamicSupervisor.which_children(Assignment.CoindataRetrieverSupervisor)
+    # |> Enum.map(fn {_, pid, _, _} ->
+    #   {Assignment.CoindataRetriever.coinpair(pid), pid} end)
+    Registry.select(Assignment.CoindataRegistry,
+      [{{:"$1", :"$2", :_}, [], [{{:"$1", :"$2"}}]}])
   end
 
   def start_coin_retriever(coinpair, timeframe) do

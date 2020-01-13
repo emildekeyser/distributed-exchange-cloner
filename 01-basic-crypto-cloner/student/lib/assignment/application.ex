@@ -7,15 +7,18 @@ defmodule Assignment.Application do
     until = Application.fetch_env!(:assignment, :until)
     max_requests_per_sec = Application.fetch_env!(:assignment, :rate)
 
+    # TODO: Clean this up (we can remove a lot of redundant parameters)
     children = [
-      # {
-      #   Registry,
-      #   name: Assignment.Coindata.Registry
-      # },
-      # {
-      #   Registry,
-      #   name: Assignment.HistoryKeeper.Registry
-      # },
+      {
+        Registry,
+        keys: :unique,
+        name: Assignment.CoindataRegistry
+      },
+      {
+        Registry,
+        keys: :unique,
+        name: Assignment.HistoryKeeperRegistry
+      },
       {
         DynamicSupervisor,
         strategy: :one_for_one,

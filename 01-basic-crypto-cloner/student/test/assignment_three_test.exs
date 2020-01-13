@@ -3,6 +3,8 @@ defmodule AssignmentTest do
 
   alias Assignment.{
     Logger,
+    HistoryKeeperRegistry,
+    CoindataRegistry,
     CoindataRetrieverSupervisor,
     RateLimiter,
     CoindataCoordinator,
@@ -14,6 +16,8 @@ defmodule AssignmentTest do
   test "Processes are registered" do
     # Should always pass
     [
+      HistoryKeeperRegistry,
+      CoindataRegistry,
       CoindataRetrieverSupervisor,
       RateLimiter,
       CoindataCoordinator,
