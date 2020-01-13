@@ -16,19 +16,20 @@ defmodule Assignment.HistoryKeeperManager  do
   end
 
   def save(coinpair, timeframe, data) do
-    retrieve_history_processes()
-    |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
-    |> List.first()
-    |> elem(1)
-    |> Assignment.HistoryKeeperWorker.save(timeframe, data)
+    # retrieve_history_processes()
+    # |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
+    # |> List.first()
+    # |> elem(1)
+    # |> Assignment.HistoryKeeperWorker.save(timeframe, data)
   end
 
   def load(coinpair, timeframe) do
-    retrieve_history_processes()
-    |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
-    |> List.first()
-    |> elem(1)
-    |> Assignment.HistoryKeeperWorker.load(timeframe)
+    # retrieve_history_processes()
+    # |> Enum.filter(fn {pair, _pid} -> pair == coinpair end)
+    # |> List.first()
+    # |> elem(1)
+    # |> Assignment.HistoryKeeperWorker.load(timeframe)
+    []
   end
 
   def start_historykeeper_worker(coinpair) do
@@ -61,7 +62,7 @@ defmodule Assignment.HistoryKeeperManager  do
 
   @impl true
   def init(_) do
-    Task.start(&start_processes/0)
+    # Task.start(&start_processes/0)
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 

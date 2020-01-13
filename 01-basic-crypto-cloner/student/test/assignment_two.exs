@@ -14,7 +14,6 @@ defmodule AssignmentTest do
   test "Processes are registered" do
     # Should always pass
     [
-      Logger,
       CoindataRetrieverSupervisor,
       RateLimiter,
       ProcessManager,

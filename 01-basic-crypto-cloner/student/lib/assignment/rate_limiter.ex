@@ -66,7 +66,7 @@ defmodule Assignment.RateLimiter do
 
   @impl true
   def handle_info(:refresh_requests_left, {max_requests, _current_requests, q}) do
-    Assignment.Logger.log(:debug, "--- refresh")
+    # Assignment.Logger.log(:debug, "--- refresh")
     refresh()
     {:noreply, {max_requests, max_requests, q}}
   end

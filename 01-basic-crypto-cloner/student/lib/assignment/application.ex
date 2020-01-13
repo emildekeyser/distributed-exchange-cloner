@@ -8,13 +8,31 @@ defmodule Assignment.Application do
     max_requests_per_sec = Application.fetch_env!(:assignment, :rate)
 
     children = [
+      # {
+      #   Registry,
+      #   name: Assignment.Coindata.Registry
+      # },
+      # {
+      #   Registry,
+      #   name: Assignment.HistoryKeeper.Registry
+      # },
+      {
+        DynamicSupervisor,
+        strategy: :one_for_one,
+        name: Assignment.CoindataRetrieverSupervisor
+      },
+      {
+        DynamicSupervisor,
+        strategy: :one_for_one,
+        name: Assignment.HistoryKeeperWorkerSupervisor
+      },
       %{
         id: Assignment.HistoryKeeperManager,
         start: {Assignment.HistoryKeeperManager, :start_link, []}
       },
       %{
-        id: Assignment.ProcessManager,
-        start: {Assignment.ProcessManager, :start_link, [{from, until}]}
+        id: Assignment.CoindataCoordinator,
+        start: {Assignment.CoindataCoordinator, :start_link, [{from, until}]}
       },
       %{
         id: Assignment.RateLimiter,
