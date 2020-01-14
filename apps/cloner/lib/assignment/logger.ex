@@ -1,7 +1,8 @@
 # TODO: use builtin logger
 defmodule Assignment.Logger do
   def log(:debug, _msg), do: nil
-      # IO.inspect(msg)
+  # def log(:debug, msg), do:
+  #     IO.inspect(msg)
   def log(:info, _msg), do: nil
       # IO.inspect(_msg)
   def log(:warn, msg), do:

@@ -20,11 +20,13 @@ defmodule Assignment.CoindataCoordinator do
   end
 
   def retrieve_coin_processes() do
-    # DynamicSupervisor.which_children(Assignment.CoindataRetrieverSupervisor)
-    # |> Enum.map(fn {_, pid, _, _} ->
-    #   {Assignment.CoindataRetriever.coinpair(pid), pid} end)
-    Registry.select(Assignment.CoindataRegistry,
-      [{{:"$1", :"$2", :_}, [], [{{:"$1", :"$2"}}]}])
+    p = Process.whereis(Assignment.CoindataRegistry)
+    if is_pid(p) and Process.alive?(p) do
+      Registry.select(Assignment.CoindataRegistry,
+        [{{:"$1", :"$2", :_}, [], [{{:"$1", :"$2"}}]}])
+    else
+      []
+    end
   end
 
   def start_coin_retriever(coinpair, timeframe) do
@@ -39,7 +41,6 @@ defmodule Assignment.CoindataCoordinator do
   end
 
   def all_coinpairs_up(timeframe) do
-    Assignment.Logger.debug("here")
     Assignment.CoindataCoordinator.get_coinpairs()
     |> Enum.each(fn p
       -> Assignment.CoindataCoordinator.start_coin_retriever(p, timeframe) end)
@@ -55,7 +56,7 @@ defmodule Assignment.CoindataCoordinator do
 
   @impl true
   def init(timeframe) do
-    Assignment.CoindataCoordinator.all_coinpairs_up(timeframe)
+    # Assignment.CoindataCoordinator.all_coinpairs_up(timeframe)
     {:ok, timeframe}
   end
 

@@ -15,4 +15,8 @@ import Config
 #       level: :info,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
-#
+
+config :cloner,
+  until: DateTime.utc_now() |> DateTime.to_unix(),
+  from: (DateTime.utc_now() |> DateTime.to_unix()) - 60 * 60 * 24 * 30,
+  rate: 5

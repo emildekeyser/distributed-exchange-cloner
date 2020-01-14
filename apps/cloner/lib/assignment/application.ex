@@ -3,9 +3,9 @@ defmodule Assignment.Application do
 
   def start(_type, _args) do
 
-    from = Application.fetch_env!(:assignment, :from)
-    until = Application.fetch_env!(:assignment, :until)
-    max_requests_per_sec = Application.fetch_env!(:assignment, :rate)
+    from = Application.fetch_env!(:cloner, :from)
+    until = Application.fetch_env!(:cloner, :until)
+    max_requests_per_sec = Application.fetch_env!(:cloner, :rate)
 
     # TODO: Clean this up (we can remove a lot of redundant parameters)
     children = [
@@ -44,7 +44,9 @@ defmodule Assignment.Application do
     ]
 
     opts = [strategy: :one_for_one, name: AssignmentTwo.Supervisor]
-    Supervisor.start_link(children, opts)
+    ret = Supervisor.start_link(children, opts)
+    Assignment.CoindataCoordinator.balance()
+    ret
   end
 
 end

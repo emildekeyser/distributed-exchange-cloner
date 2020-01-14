@@ -3,7 +3,7 @@ defmodule AssignmentOne.MixProject do
 
   def project do
     [
-      app: :assignment,
+      app: :cloner,
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,

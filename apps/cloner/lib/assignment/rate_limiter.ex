@@ -12,8 +12,10 @@ defmodule Assignment.RateLimiter do
   def start_link(max_requests), do:
     GenServer.start_link(__MODULE__, max_requests, name: __MODULE__)
 
-  def i_want_to_retrieve(retriever_id), do:
+  def i_want_to_retrieve(retriever_id) do
+    Assignment.Logger.debug(retriever_id)
     GenServer.cast(__MODULE__, {:register, retriever_id})
+  end
 
   def change_rate_limit(new_max_reqs), do:
     GenServer.cast(__MODULE__, {:new_rate, new_max_reqs})
