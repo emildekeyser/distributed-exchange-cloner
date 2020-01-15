@@ -85,11 +85,14 @@ defmodule Assignment.CoindataCoordinator do
   defp robin_hood(poor, all_rich_surplus) do
     chunksize = ceil(length(all_rich_surplus) / length(poor))
     chunks = Enum.chunk_every(all_rich_surplus, chunksize)
-    Enum.zip(poor, chunks)
+    {poor, chunks}
+    # Enum.zip(poor, chunks)
   end
 
   defp perform_transfers(transfers) do
     IO.inspect(transfers)
+    # Here is where i would perform the transfers if using
+    # CoindataRetriever.start_link/1 and .kill/1 :(
   end
 
 #        ::::::::  :::::::::: :::::::::  :::     ::: :::::::::: ::::::::: 
@@ -106,6 +109,7 @@ defmodule Assignment.CoindataCoordinator do
     {:ok, timeframe}
   end
 
+  # TODO
   @impl true
   def handle_cast(:balance, timeframe) do
     no_retrievers = __MODULE__.retrieve_coin_processes() |> length() == 0

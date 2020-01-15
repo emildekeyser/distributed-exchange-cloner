@@ -17,6 +17,10 @@ defmodule Assignment.CoindataRetriever do
     GenServer.start_link(__MODULE__, args,
       name: {:via, Registry, {Assignment.CoindataRegistry, coinpair}})
 
+  def start_link(args = {coinpair, _timeframe, _data}), do:
+    GenServer.start_link(__MODULE__, args,
+      name: {:via, Registry, {Assignment.CoindataRegistry, coinpair}})
+
   def retrieve(coinpair) do
     [{pid, :nil}] = Registry.lookup(Assignment.CoindataRegistry, coinpair)
     if Process.alive?(pid) do
@@ -36,6 +40,9 @@ defmodule Assignment.CoindataRetriever do
 
   def get_stats(pid), do:
     GenServer.call(pid, :stats)
+
+  def kill(coinpair), do: 
+    GenServer.stop({:via, Registry, {Assignment.CoindataRegistry, coinpair}})
 
   defp make_url(coinpair, {f, u}) do
     {from, until} = {to_charlist(f), to_charlist(u)}
@@ -58,6 +65,11 @@ defmodule Assignment.CoindataRetriever do
     # TODO check timeframe
     if data == [], do: Assignment.RateLimiter.i_want_to_retrieve(coinpair)
     Assignment.Logger.log(:debug, data)
+    {:ok, {coinpair, timeframe, data}}
+  end
+
+  @impl true
+  def init({coinpair, timeframe, data}) do
     {:ok, {coinpair, timeframe, data}}
   end
 
