@@ -7,8 +7,17 @@ defmodule Assignment.Application do
     until = Application.fetch_env!(:cloner, :until)
     max_requests_per_sec = Application.fetch_env!(:cloner, :rate)
 
+    topologies = [
+      libcluster_strat: [
+        strategy: Cluster.Strategy.Gossip
+      ]
+    ]
+
     # TODO: Clean this up (we can remove a lot of redundant parameters)
     children = [
+      {
+        Cluster.Supervisor, [topologies, [name: Cloner.ClusterSupervisor]]
+      },
       {
         Registry,
         keys: :unique,
@@ -45,7 +54,7 @@ defmodule Assignment.Application do
 
     opts = [strategy: :one_for_one, name: AssignmentTwo.Supervisor]
     ret = Supervisor.start_link(children, opts)
-    Assignment.CoindataCoordinator.balance()
+    if Node.list() == [], do: Assignment.CoindataCoordinator.balance()
     ret
   end
 
