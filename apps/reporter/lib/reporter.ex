@@ -12,6 +12,7 @@ defmodule Reporter do
   def start_link(args \\ []), do:
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
 
+  # TODO: add percent bar
   def report() do
     Assignment.CoindataCoordinator.retrieve_coin_processes()
     |> Enum.map(&get_stats/1)
@@ -43,7 +44,7 @@ defmodule Reporter do
 
   @impl true
   def handle_continue(_continue, _state) do
-    send(__MODULE__, :report)
+    # send(__MODULE__, :report)
     {:noreply, []}
   end
 
